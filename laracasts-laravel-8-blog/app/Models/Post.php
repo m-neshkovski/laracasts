@@ -13,12 +13,15 @@ class Post extends Model
         'title',
         'excerpt',
         'body',
-        'category_id'
+        'category_id',
+        'user_id',
     ];
 
     protected $guarded = [
         'id',
     ];
+
+    protected $with = ['category', 'author'];
 
     // ako sakame da isklucime mass assignment sekade
     // protected $guarded = [];
@@ -30,5 +33,9 @@ class Post extends Model
 
     public function category() {
         return $this->belongsTo(Category::class);
+    }
+
+    public function author() {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
