@@ -28,9 +28,31 @@ class Post extends Model
     {
 
         $query->when($filters['search'] ?? false, function($query, $search) {
-            $query->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('body', 'like', '%' . $search . '%');
+            $query->where(fn($query) =>
+
+                $query->where('title', 'like', '%' . $search . '%')
+                ->orWhere('body', 'like', '%' . $search . '%')
+            );
         });
+
+        $query->when($filters['category'] ?? false, fn($query, $category) => 
+        
+            $query->whereHas('category', fn($query) =>
+                $query->where('slug', $category)
+            )
+            // $query->whereExists(function($query, $category) {
+            //     $query->from('categories')
+            //         ->whereColumn('categories.id', 'posts.category_id')
+            //         ->where('category.slug', $category);
+            // });
+        );
+
+        $query->when($filters['author'] ?? false, fn($query, $author) => 
+        
+            $query->whereHas('author', fn($query) =>
+                $query->where('username', $author)
+            )
+        );
     }
     //     if($filters['search'] ?? false) {
     //         $query->where('title', 'like', '%' . request('search') . '%')

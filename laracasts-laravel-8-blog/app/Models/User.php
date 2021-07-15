@@ -18,6 +18,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
     ];
@@ -40,6 +41,17 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // accessor za defoltni vrednosti da dava
+    public function getUsernameAttribute($username) {
+        return ucwords($username);
+    }
+
+    // mutator for password koj se izvrsuva sekoj pat koga se kreira user
+
+    public function setPasswordAttribute($password) {
+        $this->attributes['password'] = bcrypt($password);
+    }
 
     public function posts() {
         return $this->hasMany(Post::class);
